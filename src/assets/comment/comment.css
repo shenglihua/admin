@@ -10,8 +10,7 @@
 html {
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
-    /* 字体大小设置为 100px */
-    font-size: 100px;
+
 }
 
 html,
@@ -217,7 +216,7 @@ h6 {
 }
 
 fieldset,
-img {
+， img {
     border: none;
 }
 

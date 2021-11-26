@@ -1,22 +1,21 @@
 <template>
-  <div>
-    <Login></Login>
-  </div>
+  <div class="app"></div>
 </template>
 
 <script>
-import Login from "./views/login.vue";
 export default {
   props: {},
   data() {
     return {};
   },
   methods: {},
-  components: {
-    Login,
-  },
+  components: {},
 };
 </script>
 
 <style scoped lang="scss">
+.app {
+  height: 100%;
+  width: 100%;
+}
 </style>
