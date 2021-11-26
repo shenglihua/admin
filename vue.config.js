@@ -1,18 +1,14 @@
 module.exports = {
-    publicPath: './',
-    /* devServer: {
-          host: "0.0.0.0",
-         port: 8080, // 端口号
-         https: false, // https:{type:Boolean}
-         open: true, // 自动打开
-      // proxy: 'http://localhost:3000',
-         
-      proxy: {
-        '/api': {
-          target: 'http://localhost:3000',
-          pathRewrite: { '^/api': '' },
-        },
-      },
-    }, */
-  }
-  
+    publicPath: '/',
+    devServer: {
+        proxy: {
+            '/api': {
+                target: 'http://192.168.1.61:8888', // naseurl 基础的路径地址
+                changeOrigin: true,// 是否跨域
+                pathRewrite: {
+                    '^/api':'' // 重写路径
+                }
+            }
+        }
+    }
+}
