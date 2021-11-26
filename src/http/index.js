@@ -1,7 +1,7 @@
 import axios from 'axios'
 export default function(config){
     const myaxios=axios.create({
-        baseURL:process.env.VUE_APP_BASE_URL,
+        // baseURL:process.env.VUE_APP_BASE_URL,
         timeout:1000,
     }) 
     myaxios.interceptors.request.use(function (config) {
