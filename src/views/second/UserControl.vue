@@ -26,7 +26,12 @@
           </el-table-column>
           <el-table-column prop="city" label="角色" width="170">
           </el-table-column>
-          <el-table-column prop="address" label="状态" width="170" cell-click>
+          <el-table-column
+            prop="address"
+            label="状态"
+            width="170"
+            @cell-click="swi"
+          >
             <el-switch v-model="value1" class="swit" @click="swi"></el-switch>
           </el-table-column>
           <el-table-column fixed="right" label="操作" width="180" class="icon">
