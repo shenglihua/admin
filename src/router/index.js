@@ -13,8 +13,18 @@ const routes = [
         component:()=>import('../views/login.vue')
     },
     {
-        path: '/App',
-        component:()=>import('../App.vue')
+        path: '/index',
+        component: () => import('../views/index.vue'),
+        children: [
+            {
+                path: '/',
+                redirect:'/UserControl'
+            },
+            {
+                path: '/UserControl',
+                component:()=>import('../views/second/UserControl.vue')
+            },
+        ]
     },
     
 ]
