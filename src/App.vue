@@ -1,31 +1,23 @@
 <template>
-    <div class="app">
+  <div class="app">
     <router-view></router-view>
-    </div>
+  </div>
 </template>
 
 <script>
 export default {
-    props: {
-
-    },
-    data() {
-        return {
-
-        };
-    },
-    methods: {
-
-    },
-    components: {
-
-    },
+  props: {},
+  data() {
+    return {};
+  },
+  methods: {},
+  components: {},
 };
 </script>
 
 <style scoped lang="scss">
-.app{
-    width: 100%;
-    height: 100%;
-}   
+.app {
+  width: 100%;
+  height: 100%;
+}
 </style>

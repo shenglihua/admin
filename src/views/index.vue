@@ -52,10 +52,10 @@ export default {
   components: {},
 };
 </script>
-
 <style scoped lang="scss">
 .index {
   height: 100%;
+  width: 100%;
 }
 .el-header {
   background-color: #373d41;

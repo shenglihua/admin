@@ -7,13 +7,11 @@
       <el-form-item>
         <el-button type="primary" @click="onSubmit">登录</el-button>
         <el-button>重置</el-button>
-        <!-- <el-button :plain="true" @click="open1">消息</el-button>/ -->
       </el-form-item>
     </el-form>
     <router-view></router-view>
   </div>
 </template>
-
 <script>
 import http from "../http/index";
 export default {
@@ -37,13 +35,17 @@ export default {
         },
       })
         .then((res) => {
+          console.log(res);
           sessionStorage.setItem("token", res.data.token);
           console.log(res);
           this.$message({
             message: "登录成功",
             type: "success",
+            duration: "1000",
+            onClose: () => {
+              this.$router.push("/index");
+            },
           });
-          this.$router.push("/index");
         })
         .catch((err) => {
           console.log(err);
