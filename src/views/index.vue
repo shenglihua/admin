@@ -1,93 +1,109 @@
 <template>
-  <div>
-   <el-container>
-  <el-header>
-    <span>电商后台管理系统</span>
-    <button>退出</button>
-  </el-header>
-  <el-container>
-    <el-aside width="200px">
-    <el-menu :default-openeds="['1', '3']">
-      <el-submenu index="1">
-        <template slot="title"><i class="el-icon-message"></i>导航一</template>
-        <el-menu-item-group>
-          <template slot="title">分组一</template>
-          <el-menu-item index="1-1">选项1</el-menu-item>
-          <el-menu-item index="1-2">选项2</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group title="分组2">
-          <el-menu-item index="1-3">选项3</el-menu-item>
-        </el-menu-item-group>
-        <el-submenu index="1-4">
-          <template slot="title">选项4</template>
-          <el-menu-item index="1-4-1">选项4-1</el-menu-item>
-        </el-submenu>
-      </el-submenu>
-
-    </el-menu>
-  </el-aside>
-    <el-main>Main</el-main>
-  </el-container>
-</el-container>
+  <div class="index">
+    <el-container>
+      <el-header>
+        <span>电商后台管理系统</span>
+        <button>退出</button>
+      </el-header>
+      <el-container>
+        <el-aside width="200px">
+          <el-menu :default-openeds="['125']" :unique-opened="true">
+            <el-submenu
+              :index="item.id.toString()"
+              v-for="item in aside_list"
+              :key="item.id"
+              :unique-opened="true"
+            >
+              <template slot="title"
+                ><i class="el-icon-message"></i
+                ><span class="white">{{ item.authName }}</span></template
+              >
+              <el-menu-item-group v-for="ite in item.children" :key="ite.key">
+                <el-menu-item index="1-1">{{ ite.authName }}</el-menu-item>
+              </el-menu-item-group>
+            </el-submenu>
+          </el-menu>
+        </el-aside>
+        <el-main> </el-main>
+      </el-container>
+    </el-container>
   </div>
 </template>
 
 <script>
-
+import http from "../http/index";
 export default {
   props: {},
   data() {
-    return {};
+    return {
+      value1: true,
+      aside_list: [],
+    };
+  },
+  created() {
+    http({
+      url: "/menus",
+    }).then((res) => {
+      this.aside_list = res.data;
+      console.log(res);
+    });
   },
   methods: {},
-  components: {
-  
-  },
+  components: {},
 };
 </script>
 
 <style scoped lang="scss">
-html{
+.index {
   height: 100%;
 }
-body{
- height: 100%;
-}
- .el-header {
-    background-color: #373d41;
-    color: #fff;
-    text-align: center;
-   display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #fff;
-    span{
-      font-size: 18px;
-    }
-    button{
-      width: 70px;
-      height: 40px;
-      font-size: 12px;
-      background-color: #909399;
-      border-radius: 3px;
-    }
+.el-header {
+  background-color: #373d41;
+  color: #fff;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  span {
+    font-size: 18px;
   }
-  
+  button {
+    width: 70px;
+    height: 40px;
+    font-size: 12px;
+    background-color: #909399;
+    border-radius: 3px;
+  }
+}
+.el-container {
+  height: 100%;
+
   .el-aside {
     height: 100%;
-    background-color: #D3DCE6;
-    color: #333;
+    background-color: #333744;
     text-align: center;
     line-height: 200px;
- 
-  }
-  
-  .el-main {
-    background-color: #E9EEF3;
-    color: #333;
-    text-align: center;
-    line-height: 160px;
-  }
-  
+    ul {
+      color: #fff;
+      li {
+        color: #fff;
+        background-color: #333744;
 
+        .white {
+          color: #fff !important;
+        }
+      }
+    }
+  }
+}
+.el-submenu__title:hover > {
+  background-color: black;
+  color: #fff;
+}
+.el-main {
+  background-color: #e9eef3;
+  color: #333;
+  text-align: center;
+  line-height: 160px;
+}
 </style>
