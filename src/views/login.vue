@@ -38,11 +38,12 @@ export default {
       })
         .then((res) => {
           sessionStorage.setItem("token", res.data.token);
+          console.log(res);
           this.$message({
             message: "登录成功",
             type: "success",
           });
-          this.$router.push("/App");
+          this.$router.push("/index");
         })
         .catch((err) => {
           console.log(err);
