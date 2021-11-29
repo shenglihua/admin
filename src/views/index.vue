@@ -57,7 +57,7 @@ export default {
       url: "/menus",
     }).then((res) => {
       this.aside_list = res.data;
-      console.log(res);
+      //   console.log(res);
     });
   },
   methods: {
@@ -120,6 +120,6 @@ export default {
 .el-main {
   background-color: #e9eef3;
   color: #333;
-  text-align: center;
+  // text-align: center;
 }
 </style>

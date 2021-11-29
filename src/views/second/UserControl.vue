@@ -4,52 +4,76 @@
     <div class="content">
       <ul>
         <li>
-          <input type="text" name="" id="" placeholder="请输入内容" />
+          <input
+            type="text"
+            v-model="searchs"
+            name=""
+            id=""
+            placeholder="请输入内容"
+          />
           <el-button
             type="primary"
             icon="el-icon-search"
             class="search"
+            @click="search"
           ></el-button>
-          <button>添加用户</button>
+          <button @click="shows">添加用户</button>
         </li>
       </ul>
       <!-- 用户信息 -->
       <ul>
-        <el-table :data="tableData" border style="width: 88%">
-          <el-table-column fixed prop="date" label="#" width="47">
+        <el-table :data="tableData" border style="width: 89%">
+          <el-table-column prop="1" label="#" width="47" type="index"
+            ><!--type="index" 左边显示第几条数据-->
           </el-table-column>
-          <el-table-column prop="name" label="姓名" width="170">
+          <el-table-column prop="username" label="姓名" width="170">
           </el-table-column>
-          <el-table-column prop="zip" label="邮箱" width="170">
+          <el-table-column prop="email" label="邮箱" width="170">
           </el-table-column>
-          <el-table-column prop="province" label="电话" width="170">
+          <el-table-column prop="mobile" label="电话" width="170">
           </el-table-column>
-          <el-table-column prop="city" label="角色" width="170">
+          <el-table-column prop="role_name" label="角色" width="170">
           </el-table-column>
           <el-table-column
             prop="address"
             label="状态"
             width="170"
-            @cell-click="swi"
+            @cell-click="!value1"
           >
             <el-switch v-model="value1" class="swit" @click="swi"></el-switch>
           </el-table-column>
-          <el-table-column fixed="right" label="操作" width="180" class="icon">
-            <!--  <i class="el-icon-edit"></i>
-
-            <i class="el-icon-delete"></i>
-
-            <i class="el-icon-setting"></i> -->
-
-            <!--  <template slot-scope="scope">
+          <el-table-column
+            fixed="right"
+            label="操作"
+            width="180"
+            class="icon"
+            current-row-key="index"
+          >
+            <template slot-scope="scope">
               <el-button
+                type="primary"
+                icon="el-icon-edit"
                 @click="handleClick(scope.row)"
-                type="text"
                 size="small"
-                >查看</el-button
+              ></el-button>
+
+              <el-button
+                type="danger"
+                icon="el-icon-delete"
+                @click="del(scope.row)"
+                size="small"
+              ></el-button>
+              <!-- <el-button type="text" size="small">
+                <i class="el-icon-delete"></i
+              ></el-button> -->
+              <el-button
+                type="warning"
+                size="small"
+                icon="el-icon-setting"
+                @click="pwo(scope.row)"
               >
-              <el-button type="text" size="small">编辑</el-button>
-            </template> -->
+              </el-button>
+            </template>
           </el-table-column>
         </el-table>
       </ul>
@@ -59,45 +83,221 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage4"
-          :page-sizes="[100, 200, 300, 400]"
+          :page-sizes="[1, 2, 3, 4]"
           :page-size="100"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="400"
+          :total="10"
         >
         </el-pagination>
+      </div>
+      <!-- 添加用户界面 -->
+      <div class="add" v-show="isshow">
+        <el-form
+          :model="ruleForm"
+          :rules="rules"
+          ref="ruleForm"
+          label-width="100px"
+          class="demo-ruleForm"
+        >
+          <p class="adduser">
+            <span>添加用户</span> <i class="el-icon-close" @click="yin"> </i>
+          </p>
+          <el-form-item label="用户名" prop="username">
+            <el-input v-model="ruleForm.username"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="pass">
+            <el-input v-model="ruleForm.pass"></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱" prop="email">
+            <el-input v-model="ruleForm.email"></el-input>
+          </el-form-item>
+          <el-form-item label="手机" prop="mobile">
+            <el-input v-model="ruleForm.mobile"></el-input>
+          </el-form-item>
+
+          <el-form-item>
+            <el-button type="primary" @click="submitForm('ruleForm')"
+              >立即创建</el-button
+            >
+            <el-button @click="resetForm('ruleForm')">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+      <!-- 修改用户信息 -->
+      <div class="changeinfo" v-show="usershow">
+        <el-form
+          :model="changes"
+          :rules="rulechan"
+          ref="changes"
+          label-width="100px"
+          class="demo-ruleForm"
+        >
+          <p class="adduser">
+            <span>修改用户</span>
+            <i class="el-icon-close" @click="changey"> </i>
+          </p>
+          <el-form-item label="用户名" prop="userns">
+            <el-input v-model="changes.userns" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱" prop="uemails">
+            <el-input v-model="changes.uemails"></el-input>
+          </el-form-item>
+          <el-form-item label="手机" prop="uphone">
+            <el-input v-model="changes.uphone"></el-input>
+          </el-form-item>
+
+          <el-form-item>
+            <el-button type="primary" @click="ensure('changes')"
+              >确定</el-button
+            >
+            <el-button @click="cancel('changes')">取消</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+      <!-- 分配用户权限 -->
+      <div class="userpower" v-show="prowshow">
+        <div class="bgcolor">
+          <p class="adduser">
+            <span>分配角色</span>
+            <i class="el-icon-close" @click="you1"> </i>
+          </p>
+          <ul>
+            <li>
+              <span>当前用户：{{ nowuser }}</span>
+            </li>
+            <li>
+              <span>当前的角色：{{ nowpow }}</span>
+            </li>
+            <li>
+              <span>分配新角色：</span>
+              <p>
+                <input type="text" placeholder="请选择" v-model="command" />
+                <el-dropdown
+                  trigger="click"
+                  class="posi"
+                  @command="handleCommand"
+                >
+                  <span class="el-dropdown-link">
+                    <i class="el-icon-arrow-down el-icon--right"></i>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="管理员">管理员</el-dropdown-item>
+                    <el-dropdown-item command="经理">经理</el-dropdown-item>
+                    <el-dropdown-item command="临时工">临时工</el-dropdown-item>
+                    <el-dropdown-item command="员工">员工</el-dropdown-item>
+                    <el-dropdown-item command="跑龙套">跑龙套</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </p>
+            </li>
+            <p class="sub">
+              <el-button @click="you1">取消</el-button>
+              <el-button type="primary" @click="queren">确定</el-button>
+            </p>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
 </template>
-
+           
 <script>
 import http from "../../http/index";
 export default {
   props: {},
   data() {
     return {
+      searchs: "",
       value1: false, // switch
-      //   currentPage1: 5,
-      //   currentPage2: 5,
-      //   currentPage3: 5,
       currentPage4: 4,
-      tableData: [
-        {
-          date: "#",
-          name: "王小虎",
-          province: "上海",
-          city: "普陀区",
-          address: "上海市普陀区金沙江路 1518 弄",
-          zip: 200333,
-        },
-      ],
+      //用户列表数据
+      tableData: [],
+      searcharr: [],
+
+      // 添加用户
+      isshow: false,
+      ruleForm: {
+        username: "",
+        pass: "",
+        email: "",
+        mobile: "",
+      },
+      rules: {
+        username: [
+          { required: true, message: "请输入用户名", trigger: "blur" },
+          {
+            min: 3,
+            max: 10,
+            message: "长度在 3 到 10 个字符",
+            trigger: "blur",
+          },
+        ],
+        pass: [
+          { required: true, message: "请输入密码", trigger: "blur" },
+          {
+            min: 3,
+            max: 10,
+            message: "长度在 3 到 10 个字符",
+            trigger: "blur",
+          },
+        ],
+        email: [
+          { required: true, message: "请输入邮箱", trigger: "blur" },
+          {
+            min: 3,
+            max: 20,
+            message: "长度在 3 到  20个字符",
+            trigger: "blur",
+          },
+        ],
+        mobile: [
+          { required: true, message: "请输入手机号", trigger: "blur" },
+          {
+            min: 3,
+            max: 15,
+            message: "长度在 3 到  15个字符",
+            trigger: "blur",
+          },
+        ],
+      },
+      //修改用户信息
+      usershow: false,
+      changes: {
+        userns: "",
+        uemails: "",
+        uphone: "",
+      },
+      rulechan: {
+        uemails: [
+          { required: true, message: "请输入邮箱", trigger: "blur" },
+          {
+            min: 3,
+            max: 15,
+            message: "长度在 3 到 15 个字符",
+            trigger: "blur",
+          },
+        ],
+        uphone: [
+          { required: true, message: "请输入手机号", trigger: "blur" },
+          {
+            min: 3,
+            max: 11,
+            message: "长度在 3 到 15 个字符",
+            trigger: "blur",
+          },
+        ],
+      },
+      //存储要修改的用户信息
+      userinfo: {},
+      // 用户权限分配
+      prowshow: false,
+      command: "",
+      nowuser: "",
+      nowpow: "",
+      pwoinfo: {},
     };
   },
   methods: {
-    //人员列表方法
-    handleClick(row) {
-      console.log(row);
-    },
     //分页器方法
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
@@ -110,21 +310,179 @@ export default {
       console.log(this.value1);
       this.value1 = !this.value1;
     },
+    //添加用户页面
+    shows() {
+      this.isshow = true;
+      this.ruleForm.username = "";
+      this.ruleForm.pass = "";
+      this.ruleForm.email = "";
+      this.ruleForm.mobile = "";
+    },
+    yin() {
+      this.isshow = false;
+    },
+    // 重置输入内容
+    resetForm() {
+      (this.ruleForm.username = ""),
+        (this.ruleForm.pass = ""),
+        (this.ruleForm.email = ""),
+        (this.ruleForm.mobile = "");
+    },
+    // 添加用户
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          console.log(formName);
+          http({
+            url: "/users",
+            method: "post",
+            data: {
+              username: this.ruleForm.username,
+              password: this.ruleForm.pass,
+              email: this.ruleForm.email,
+              mobile: this.ruleForm.mobile,
+            },
+          }).then(() => {
+            this.userlist();
+            // this.tableData.push(this.ruleForm);
+            this.isshow = false;
+          });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    // 用户查找
+    search() {
+      let ress = this.tableData.filter((item) => {
+        return item.username == this.searchs;
+      });
+
+      http({
+        url: `users/${ress[0].id}`,
+      }).then((res) => {
+        if (this.searcharr.indexOf(res.data) == -1) {
+          this.searcharr.push(res.data);
+          this.tableData = this.searcharr;
+        }
+      });
+    },
+    //用户列表
+    userlist() {
+      return http({
+        url: "/users",
+        params: {
+          // query: "",
+          pagenum: "1",
+          pagesize: "20",
+        },
+      }).then((res) => {
+        // console.log(res.data);
+        this.tableData = res.data.users;
+        if (this.search == "") {
+          this.tableData = res.data.users;
+        }
+      });
+    },
+    //用户删除
+    del(index) {
+      //   console.log(index);
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          http({
+            url: `/users/${index.id}`,
+            method: "delete",
+          }).then((res) => {
+            console.log(res);
+            this.$message({
+              type: "success",
+              message: "删除成功!",
+            });
+            this.userlist();
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+    // 修改用户信息
+    handleClick(changes) {
+      console.log(changes);
+      this.changes.userns = changes.username;
+      this.userinfo = changes;
+      this.usershow = true;
+    },
+    ensure(changes) {
+      this.$refs[changes].validate((valid) => {
+        if (valid) {
+          http({
+            url: `/users/${this.userinfo.id}`,
+            method: "put",
+            data: {
+              email: this.changes.uemails,
+              mobile: this.changes.uphone,
+            },
+          }).then(() => {
+            this.usershow = false;
+            this.userlist();
+          });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    changey() {
+      this.usershow = false;
+    },
+    cancel() {
+      this.usershow = false;
+    },
+    // 分配用户权限
+    pwo(index) {
+      console.log(index);
+      this.pwoinfo = index;
+      this.prowshow = true;
+      this.nowuser = index.username;
+      this.nowpow = index.role_name;
+    },
+    you1() {
+      this.prowshow = false;
+    },
+    handleCommand(command) {
+      console.log(command);
+      this.command = command;
+    },
+    queren() {
+      if (this.command != "") {
+        console.log(this.pwoinfo.id, this.command);
+        http({
+          url: `/users/${this.pwoinfo.id}/role`,
+          method: "put",
+          data: {
+            rid: this.command,
+          },
+        }).then((res) => {
+          console.log(res);
+          this.prowshow = false;
+        });
+      }
+    },
   },
   components: {},
   created() {
-    http({
-      url: "/roles",
-      /*  data: {
-        username: this.form.name,
-        password: this.form.pass,
-      }, */
-    }).then((res) => {
-      console.log(res);
-    });
+    this.userlist();
   },
 };
-</script>
+</script> 
 
 <style scoped lang="scss">
 .users {
@@ -190,11 +548,136 @@ export default {
         align-items: center;
         icon {
           size: 30px;
+          justify-content: space-evenly;
         }
         span {
-          width: 44px;
-          height: 28px;
-          background-color: violet;
+          display: inline-block;
+          width: 40px;
+          height: 25px;
+          text-align: center;
+          line-height: 28px;
+          border-radius: 3px;
+          margin-left: 10px;
+          color: white;
+        }
+
+        span:nth-child(1) {
+          background-color: #409eff;
+        }
+        span:nth-child(2) {
+          background-color: #f56c6c;
+        }
+        span:nth-child(3) {
+          background-color: #e6a23c;
+        }
+      }
+    }
+    .add {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 666;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .demo-ruleForm {
+        width: 600px;
+        height: 430px;
+        background-color: white;
+        padding: 20px 20px 0px 0px;
+        .adduser {
+          font-size: 18px;
+          padding-left: 20px;
+          margin-bottom: 40px;
+          display: flex;
+          justify-content: space-between;
+        }
+      }
+    }
+    .changeinfo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 666;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .demo-ruleForm {
+        width: 600px;
+        height: 350px;
+        background-color: white;
+        padding: 20px 20px 0px 0px;
+        .adduser {
+          font-size: 18px;
+          padding-left: 20px;
+          margin-bottom: 40px;
+          display: flex;
+          justify-content: space-between;
+        }
+      }
+    }
+    .userpower {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 666;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .bgcolor {
+        position: relative;
+        width: 600px;
+        height: 350px;
+        background-color: white;
+        padding: 20px;
+        .adduser {
+          font-size: 18px;
+          //   padding-left: 20px;
+          margin-bottom: 40px;
+          display: flex;
+          justify-content: space-between;
+        }
+        ul {
+          .sub {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+          }
+          li {
+            margin-bottom: 20px;
+          }
+          li:nth-child(3) {
+            display: flex;
+            align-items: center;
+            p {
+              border: 1px solid #409eff;
+              width: 215px;
+              height: 36px;
+              border-radius: 3px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding: 0px 10px;
+              input {
+                padding-left: 10px;
+              }
+              .list {
+                width: 200px;
+              }
+            }
+            .dropdown-menu-3146 {
+              width: 200px;
+            }
+          }
         }
       }
     }

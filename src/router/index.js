@@ -26,6 +26,11 @@ const routes = [{
                 path: 'roles',
                 component: () => import('../components/Permissions/roles.vue')
             },
+            {
+                path: 'productlist',
+                component:()=>import('../views/second/productlist.vue')
+            },
+            
         ]
     },
 
