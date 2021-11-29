@@ -18,12 +18,17 @@ const routes = [
         children: [
             {
                 path: '/',
-                redirect:'/UserControl'
+                redirect:'UserControl'
             },
             {
-                path: '/UserControl',
+                path: 'UserControl',
                 component:()=>import('../views/second/UserControl.vue')
             },
+            {
+                path: 'productlist',
+                component:()=>import('../views/second/productlist.vue')
+            },
+            
         ]
     },
     

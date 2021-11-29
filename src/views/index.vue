@@ -24,7 +24,7 @@
             </el-submenu>
           </el-menu>
         </el-aside>
-        <el-main> </el-main>
+        <el-main><router-view></router-view></el-main>
       </el-container>
     </el-container>
   </div>
@@ -45,7 +45,7 @@ export default {
       url: "/menus",
     }).then((res) => {
       this.aside_list = res.data;
-      console.log(res);
+      //   console.log(res);
     });
   },
   methods: {},
@@ -103,7 +103,7 @@ export default {
 .el-main {
   background-color: #e9eef3;
   color: #333;
-  text-align: center;
-  line-height: 160px;
+  /* text-align: center;
+  line-height: 160px; */
 }
 </style>
