@@ -6,25 +6,36 @@
         <button>退出</button>
       </el-header>
       <el-container>
-        <el-aside width="200px">
-          <el-menu :default-openeds="['125']" :unique-opened="true">
+        <el-aside   >
+          <div class="aside_h" >|||</div>
+          <el-menu    
+           :unique-opened="true"
+            :default-openeds="['0']"
+            :default-active='"users"'
+            text-color="#fff !important"
+            active-text-color="#409eff !important"
+             :router='true'
+             
+          >
             <el-submenu
-              :index="item.id.toString()"
-              v-for="item in aside_list"
+             v-for="(item,index) in aside_list"
               :key="item.id"
-              :unique-opened="true"
+              :index="index.toString()"
             >
               <template slot="title"
-                ><i class="el-icon-message"></i
-                ><span class="white">{{ item.authName }}</span></template
+                ><i class="el-icon-message"></i>{{ item.authName }}</template
               >
-              <el-menu-item-group v-for="ite in item.children" :key="ite.key">
-                <el-menu-item index="1-1">{{ ite.authName }}</el-menu-item>
+              <el-menu-item-group v-for="(ite) in item.children" :key="ite.key" >
+         
+                <el-menu-item :index="ite.path" > {{   ite.authName }}</el-menu-item>
+          
               </el-menu-item-group>
             </el-submenu>
           </el-menu>
         </el-aside>
-        <el-main> </el-main>
+        <el-main> 
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
   </div>
@@ -36,6 +47,7 @@ export default {
   props: {},
   data() {
     return {
+      isCollapse:false,
       value1: true,
       aside_list: [],
     };
@@ -48,11 +60,22 @@ export default {
       console.log(res);
     });
   },
-  methods: {},
+  methods: {
+  },
   components: {},
 };
 </script>
-<style scoped lang="scss">
+<style  lang="scss">
+
+.aside_h{
+  background-color: #4a5064;
+  height: 25px;
+  color: #fff;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .index {
   height: 100%;
   width: 100%;
@@ -77,33 +100,26 @@ export default {
 }
 .el-container {
   height: 100%;
-
   .el-aside {
-    height: 100%;
+    width: 200px !important;
+    overflow: hidden;
     background-color: #333744;
-    text-align: center;
     line-height: 200px;
     ul {
-      color: #fff;
       li {
         color: #fff;
         background-color: #333744;
-
-        .white {
-          color: #fff !important;
-        }
       }
     }
   }
 }
-.el-submenu__title:hover > {
-  background-color: black;
-  color: #fff;
+.el-submenu__title:hover {
+  background-color: grey;
 }
+
 .el-main {
   background-color: #e9eef3;
   color: #333;
   text-align: center;
-  line-height: 160px;
 }
 </style>
