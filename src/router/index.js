@@ -16,11 +16,11 @@ const routes = [{
         component: () => import('../views/index.vue'),
         children: [{
                 path: '/',
-                redirect: 'UserControl'
+                redirect: 'users'
             },
             {
-                path: 'UserControl',
-                component: () => import('../views/second/UserControl.vue')
+                path: 'users',
+                component: () => import('../views/second/users.vue')
             },
             {
                 path: 'roles',
@@ -29,6 +29,14 @@ const routes = [{
             {
                 path: 'productlist',
                 component:()=>import('../views/second/productlist.vue')
+            },
+            {
+                path: 'reports',
+                component:()=>import('../views/second/reports.vue')
+            },
+            {
+                path: 'categories',
+                component:()=>import('../views/second/categories.vue')
             },
             
         ]

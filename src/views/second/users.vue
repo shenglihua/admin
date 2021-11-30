@@ -34,13 +34,13 @@
           </el-table-column>
           <el-table-column prop="role_name" label="角色" width="170">
           </el-table-column>
-          <el-table-column
-            prop="address"
-            label="状态"
-            width="170"
-            @cell-click="!value1"
-          >
-            <el-switch v-model="value1" class="swit" @click="swi"></el-switch>
+          <el-table-column prop="address" label="状态" width="170">
+            <el-switch
+              v-model="value1"
+              class="swit"
+              @change="swi(index)"
+            ></el-switch>
+            <!--  @chnag="swi" -->
           </el-table-column>
           <el-table-column
             fixed="right"
@@ -83,10 +83,10 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage4"
-          :page-sizes="[1, 2, 3, 4]"
+          :page-sizes="[7]"
           :page-size="100"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="10"
+          :total="total"
         >
         </el-pagination>
       </div>
@@ -181,9 +181,9 @@
                     <i class="el-icon-arrow-down el-icon--right"></i>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item command="管理员">管理员</el-dropdown-item>
-                    <el-dropdown-item command="经理">经理</el-dropdown-item>
-                    <el-dropdown-item command="临时工">临时工</el-dropdown-item>
+                    <el-dropdown-item command="-1">超级管理员</el-dropdown-item>
+                    <el-dropdown-item command="30">主管</el-dropdown-item>
+                    <el-dropdown-item command="40">副主管</el-dropdown-item>
                     <el-dropdown-item command="员工">员工</el-dropdown-item>
                     <el-dropdown-item command="跑龙套">跑龙套</el-dropdown-item>
                   </el-dropdown-menu>
@@ -295,20 +295,33 @@ export default {
       nowuser: "",
       nowpow: "",
       pwoinfo: {},
+      //分页器 总数
+      total: 0,
     };
   },
   methods: {
     //分页器方法
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      // 这个方法是每页显示的条数
+      console.log(val);
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      //   console.log(val);
+      http({
+        url: "/users",
+        params: {
+          // query: "",
+          pagenum: val,
+          pagesize: "7",
+        },
+      }).then((res) => {
+        // console.log(res.data);
+        this.tableData = res.data.users;
+      });
     },
     //switch 开关
-    swi() {
-      console.log(this.value1);
-      this.value1 = !this.value1;
+    swi(aa) {
+      console.log(aa);
     },
     //添加用户页面
     shows() {
@@ -342,7 +355,8 @@ export default {
               email: this.ruleForm.email,
               mobile: this.ruleForm.mobile,
             },
-          }).then(() => {
+          }).then((res) => {
+            console.log(res);
             this.userlist();
             // this.tableData.push(this.ruleForm);
             this.isshow = false;
@@ -375,16 +389,19 @@ export default {
         params: {
           // query: "",
           pagenum: "1",
-          pagesize: "20",
+          pagesize: "7",
         },
       }).then((res) => {
-        // console.log(res.data);
+        console.log(res.data);
         this.tableData = res.data.users;
-        if (this.search == "") {
+        this.total = res.data.total; // 所用用户总数
+        /* if (this.search == "") {
           this.tableData = res.data.users;
-        }
+          console.log(this.tableData);
+        } */
       });
     },
+
     //用户删除
     del(index) {
       //   console.log(index);
@@ -472,6 +489,7 @@ export default {
           },
         }).then((res) => {
           console.log(res);
+          this.userlist();
           this.prowshow = false;
         });
       }
@@ -680,6 +698,11 @@ export default {
           }
         }
       }
+    }
+    .block {
+      width: 89%;
+      text-align: center;
+      margin-top: 15px;
     }
   }
 }
