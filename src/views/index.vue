@@ -25,15 +25,15 @@
               <template slot="title"
                 ><i class="el-icon-message"></i>{{ item.authName }}</template
               >
-              <el-menu-item-group v-for="(ite) in item.children" :key="ite.key" >
-         
-                <el-menu-item :index="ite.path" > {{   ite.authName }}</el-menu-item>
-          
+              <el-menu-item-group v-for="ite in item.children" :key="ite.key">
+                <el-menu-item :index="ite.path">
+                  {{ ite.authName }}</el-menu-item
+                >
               </el-menu-item-group>
             </el-submenu>
           </el-menu>                                                                                                                        
         </el-aside>
-        <el-main> 
+        <el-main>
           <router-view></router-view>
         </el-main>
       </el-container>
@@ -47,7 +47,7 @@ export default {
   props: {},
   data() {
     return {
-      isCollapse:false,
+      isCollapse: false,
       value1: true,
       aside_list: [],
     };
@@ -57,17 +57,15 @@ export default {
       url: "/menus",
     }).then((res) => {
       this.aside_list = res.data;
-      //   console.log(res);
+      console.log(res);
     });
   },
-  methods: {
-  },
+  methods: {},
   components: {},
 };
 </script>
 <style  lang="scss">
-
-.aside_h{
+.aside_h {
   background-color: #4a5064;
   height: 25px;
   color: #fff;
