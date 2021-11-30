@@ -9,17 +9,17 @@
         <el-aside   >
           <div class="aside_h" >|||</div>
           <el-menu    
-           :unique-opened="true"
-            :default-openeds="['0']"
-            :default-active='"users"'
+        
+            :default-openeds="['0','users']"
+            default-active='users'  
             text-color="#fff !important"
             active-text-color="#409eff !important"
              :router='true'
-             
-          >
-            <el-submenu
              v-for="(item,index) in aside_list"
               :key="item.id"
+              :unique-opened="true" 
+          >
+            <el-submenu
               :index="index.toString()"
             >
               <template slot="title"
@@ -31,7 +31,7 @@
           
               </el-menu-item-group>
             </el-submenu>
-          </el-menu>
+          </el-menu>                                                                                                                        
         </el-aside>
         <el-main> 
           <router-view></router-view>

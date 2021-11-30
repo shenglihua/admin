@@ -16,10 +16,10 @@ const routes = [{
         component: () => import('../views/index.vue'),
         children: [{
                 path: '/',
-                redirect: 'UserControl'
+                redirect: 'users'
             },
             {
-                path: 'UserControl',
+                path: 'users',
                 component: () => import('../views/second/UserControl.vue')
             },
             {
