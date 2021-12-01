@@ -372,15 +372,30 @@ export default {
       let ress = this.tableData.filter((item) => {
         return item.username == this.searchs;
       });
-
-      http({
-        url: `users/${ress[0].id}`,
-      }).then((res) => {
-        if (this.searcharr.indexOf(res.data) == -1) {
-          this.searcharr.push(res.data);
-          this.tableData = this.searcharr;
-        }
-      });
+      console.log(ress);
+      if (this.searchs && ress.length != 0) {
+        http({
+          url: `users/${ress[0].id}`,
+        })
+          .then((res) => {
+            if (this.searcharr.indexOf(res.data) == -1) {
+              this.searcharr.push(res.data);
+              this.tableData = this.searcharr;
+            }
+          })
+          .catch(() => {
+            console.log(111);
+            this.$message({
+              message: "没有你要找的用户！",
+              type: "warning",
+            });
+          });
+      } else {
+        this.$message({
+          message: "请输入正确的用户信息！",
+          type: "warning",
+        });
+      }
     },
     //用户列表
     userlist() {

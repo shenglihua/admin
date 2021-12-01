@@ -38,6 +38,10 @@ const routes = [{
                 path: 'categories',
                 component:()=>import('../views/second/categories.vue')
             },
+            {
+                path: 'goods',
+                component:()=>import('../views/second/goods.vue')
+            },
             
         ]
     },

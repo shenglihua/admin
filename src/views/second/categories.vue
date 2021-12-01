@@ -3,85 +3,85 @@
     <p class="title"><span>首页</span> > 商品管理 > 商品列表</p>
     <div class="content">
       <template>
-        <el-table :data="tableData" style="width: 100%">
-          <el-table-column label="#" width="180">
-            <template slot-scope="scope">
-              <span style="margin-left: 10px">{{ scope.row.date }}</span>
-            </template>
+        <el-table
+          :data="tableData"
+          border
+          style="width: 100%"
+          @expand-change="second"
+        >
+          <el-table-column
+            fixed
+            prop="date"
+            type="index"
+            label="#"
+            width="70px"
+          >
           </el-table-column>
-
-          <el-table-column label="是否有效" width="180">
-            <template slot-scope="scope">
-              <span style="margin-left: 10px">{{ scope.row.date }}</span>
-            </template>
+          <el-table-column
+            prop="cat_name"
+            type="expand"
+            label="分类名称!"
+            width="258px"
+          >
+            asd
           </el-table-column>
-
-          <el-table-column label="排序" width="180">
-            <template slot-scope="scope">
-              {{ scope.row.name }}
-            </template>
+          <el-table-column prop="cat_id" label="是否有效" width="258px">
           </el-table-column>
-
-          <el-table-column label="操作">
+          <el-table-column prop="cat_level" label="排序" width="258px">
+          </el-table-column>
+          <el-table-column fixed="right" label="操作" width="258px">
             <template slot-scope="scope">
               <el-button
-                size="mini"
-                @click="handleEdit(scope.$index, scope.row)"
-                >编辑</el-button
+                @click="handleClick(scope.row)"
+                type="text"
+                size="small"
+                >查看</el-button
               >
-              <el-button
-                size="mini"
-                type="danger"
-                @click="handleDelete(scope.$index, scope.row)"
-                >删除</el-button
-              >
+              <el-button type="text" size="small">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
       </template>
     </div>
+    <div></div>
   </div>
 </template>
 
 <script>
+import http from "../../http/index";
 export default {
   props: {},
   data() {
     return {
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: " 1518 弄",
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: " 1517 弄",
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: " 1519 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王asdsa",
-          address: "1516 弄",
-        },
-      ],
+      tableData: [],
     };
   },
   methods: {
     //删除 编辑事件
-    handleEdit(index, row) {
-      console.log(index, row);
+
+    // 商品分类请求数据
+    comlist() {
+      http({
+        url: "/categories",
+        params: {
+          type: 1,
+          pagenum: "2",
+          pagesize: "10",
+        },
+      }).then((res) => {
+        this.tableData = res.data.result;
+        console.log(this.tableData);
+      });
     },
-    handleDelete(index, row) {
-      console.log(index, row);
+    // 展开行？
+    second() {
+      console.log("asdasd");
     },
   },
   components: {},
+  mounted() {
+    this.comlist();
+  },
 };
 </script>
 
