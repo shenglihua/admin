@@ -14,8 +14,12 @@
             border
           >
             <!-- 这一列，专门渲染 一级权限 -->
-            <el-col :span="5">
-              <el-tag closable>{{ item1.authName }}</el-tag>
+            <el-col :span="5" class="border">
+              <el-tag
+                closable
+                @close="handleClose(scope.row, item1.id, item1)"
+                >{{ item1.authName }}</el-tag
+              >
               <i class="el-icon-caret-right"></i>
             </el-col>
             <!-- 还剩余 19 列，分配给二三级权限 -->
@@ -24,11 +28,17 @@
               <el-row
                 v-for="item2 in item1.children"
                 :key="item2.id"
-                class="centerRow"
+            class="centerRow1"
+          
               >
                 <!-- 放二级权限 -->
                 <el-col :span="6">
-                  <el-tag closable type="success">{{ item2.authName }}</el-tag>
+                  <el-tag
+                    closable
+                    type="success"
+                    @close="handleClose(scope.row, item2.id, item1)"
+                    >{{ item2.authName }}</el-tag
+                  >
                   <i class="el-icon-caret-right"></i>
                 </el-col>
                 <!-- 放三级权限 -->
@@ -38,6 +48,7 @@
                     type="warning"
                     v-for="item3 in item2.children"
                     :key="item3.id"
+                    @close="handleClose(scope.row, item3.id, item1)"
                   >
                     {{ item3.authName }}</el-tag
                   >
@@ -127,11 +138,20 @@
         node-key="id"
         highlight-current
         :props="defaultProps"
+        ref="tree"
       >
       </el-tree>
       <span slot="footer" class="dialog-footer">
         <el-button @click="permissions = false">取 消</el-button>
-        <el-button type="primary" @click="permissions = false">确 定</el-button>
+        <el-button type="primary" @click="subb()">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 移除权限 -->
+    <el-dialog title="提示" :visible.sync="remove" width="30%">
+      <span>确认移除权限吗 吗？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="remove = false">取 消</el-button>
+        <el-button type="primary" @click="rem()">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -150,8 +170,11 @@ export default {
       dialogVisible: false,
       dialogFormVisible: false,
       revise: false,
+      remove: false,
       info: {},
-
+      rowID: "",
+      id: "",
+      item: [],
       ruleForm: {
         desc: "",
         name: "",
@@ -171,11 +194,12 @@ export default {
     };
   },
   created() {
+    
     // 请求权限列表
     http({
       url: "rights/tree",
     }).then((res) => {
-      (this.perm_list = res.data), console.log(res);
+      this.perm_list = res.data;
     });
     // 请求人
     this.request();
@@ -233,12 +257,7 @@ export default {
     setCheckedNodes(index, row) {
       this.permissions = true;
 
-      //  http({
-      //   url: "rights/list",
-      // }).then((res) => {
-      //   console.log(res);
-      // });
-
+      this.info = row;
       this.getLeafIds(row, this.keys);
 
       this.defaultCheckedKeys = this.keys;
@@ -250,6 +269,29 @@ export default {
       } else {
         node.children.forEach((item) => this.getLeafIds(item, keys));
       }
+    },
+    //分配权限提交
+    subb() {
+      this.permissions = false;
+      const arr1 = this.$refs.tree.getCheckedKeys();
+      const arr2 = this.$refs.tree.getHalfCheckedKeys();
+      const rids = [...arr1, ...arr2].join(",");
+      console.log(rids);
+      http({
+        method: "post",
+        url: `roles/${this.info.id}/rights`,
+        data: {
+          rids,
+        },
+      }).then((res) => {
+        if (res) {
+          console.log(res);
+          this.request();
+          this.$message.success("分配权限成功！");
+        } else {
+          this.$message.error("分配权限失败！");
+        }
+      });
     },
     //添加角色
     submit() {
@@ -266,8 +308,35 @@ export default {
       });
       this.dialogFormVisible = false;
     },
+    // x号删除
+    handleClose(rowID, id, item) {
+      this.remove = true;
+      console.log(rowID, id, item);
+      (this.rowID = rowID), (this.id = id);
+      this.item = item;
+      
+    },
+    // X删除确认
+    rem() {
+      this.remove = false;
+
+      http({
+        url: `roles/${this.rowID.id}/rights/${this.id}`,
+        method: "delete",
+      }).then((res) => {
+        if (res) {
+          // this.request();
+          this.rowID.children = res.data;
+          console.log(res.data);
+          this.$message.success("删除权限成功！");
+        } else {
+          this.$message.error("删除权限失败！");
+        }
+      });
+    },
   },
   components: {},
+
 };
 </script>
 
@@ -290,4 +359,25 @@ export default {
   width: 50%;
 }
 // 下拉权限设置
+.centerRow,.centerRow1{
+  display: flex;
+  align-items: center;
+}
+.centerRow:nth-last-child(n+1){
+   border-top: 1px solid #eeeeee;
+}
+.centerRow:last-child{
+  border-bottom: 1px solid #eeeeee;
+
+}
+
+.centerRow1:nth-last-child(n+2){
+   border-bottom: 1px solid #eeeeee;
+}
+.el-col>span{
+  margin-right: 14px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+
+}
 </style>

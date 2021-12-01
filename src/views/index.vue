@@ -9,8 +9,7 @@
         <el-aside   >
           <div class="aside_h" >|||</div>
           <el-menu    
-        
-            :default-openeds="['0','users']"
+            :default-openeds="['0']"
             default-active='users'  
             text-color="#fff !important"
             active-text-color="#409eff !important"
