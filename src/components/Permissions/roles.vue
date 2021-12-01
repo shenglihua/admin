@@ -257,6 +257,11 @@ export default {
     setCheckedNodes(index, row) {
       this.permissions = true;
 
+      //  http({
+      //   url: "rights/list",
+      // }).then((res) => {
+      //   console.log(res);
+      // });
       this.info = row;
       this.getLeafIds(row, this.keys);
 
