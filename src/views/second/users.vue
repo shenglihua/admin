@@ -22,7 +22,13 @@
       </ul>
       <!-- 用户信息 -->
       <ul>
-        <el-table :data="tableData" border style="width: 89%">
+        <el-table
+          :data="tableData"
+          border
+          style="width: 89%"
+          :row-style="{ height: '42px' }"
+          :cell-style="{ padding: '0' }"
+        >
           <el-table-column prop="1" label="#" width="47" type="index"
             ><!--type="index" 左边显示第几条数据-->
           </el-table-column>
@@ -82,8 +88,8 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage4"
-          :page-sizes="[7]"
+          :current-page="1"
+          :page-sizes="[10]"
           :page-size="100"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
@@ -207,9 +213,11 @@ export default {
   props: {},
   data() {
     return {
+      // 搜索用户
       searchs: "",
+
       value1: false, // switch
-      currentPage4: 4,
+      //   currentPage4: 4,
       //用户列表数据
       tableData: [],
       searcharr: [],
@@ -312,7 +320,7 @@ export default {
         params: {
           // query: "",
           pagenum: val,
-          pagesize: "7",
+          pagesize: "10",
         },
       }).then((res) => {
         // console.log(res.data);
@@ -404,7 +412,7 @@ export default {
         params: {
           // query: "",
           pagenum: "1",
-          pagesize: "7",
+          pagesize: "10",
         },
       }).then((res) => {
         console.log(res.data);
@@ -536,7 +544,7 @@ export default {
   }
   .content {
     width: 100%;
-    height: 100%;
+    // height: 100%;
     ul:nth-child(1) {
       li {
         overflow: hidden;
