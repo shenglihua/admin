@@ -28,8 +28,7 @@
               <el-row
                 v-for="item2 in item1.children"
                 :key="item2.id"
-            class="centerRow1"
-          
+                class="centerRow1"
               >
                 <!-- 放二级权限 -->
                 <el-col :span="6">
@@ -131,7 +130,6 @@
     <!-- 分配权限 -->
     <el-dialog title="分配权限" :visible.sync="permissions" width="30%">
       <el-tree
-        :default-checked-keys="keys"
         :data="perm_list"
         show-checkbox
         default-expand-all
@@ -194,7 +192,6 @@ export default {
     };
   },
   created() {
-    
     // 请求权限列表
     http({
       url: "rights/tree",
@@ -256,12 +253,15 @@ export default {
     //分配权限
     setCheckedNodes(index, row) {
       this.permissions = true;
-
+      this.keys = [];
       this.info = row;
       this.getLeafIds(row, this.keys);
+      console.log(this.$refs.tree);
+      this.$nextTick(() => {
+        this.$refs.tree.setCheckedKeys(this.keys);
+      });
 
-      this.defaultCheckedKeys = this.keys;
-      console.log(this.tableData, this.keys);
+      // console.log(this.tableData, this.keys);
     },
     getLeafIds(node, keys) {
       if (!node.children) {
@@ -287,6 +287,7 @@ export default {
         if (res) {
           console.log(res);
           this.request();
+            this.$refs.tree.setCheckedKeys([]);
           this.$message.success("分配权限成功！");
         } else {
           this.$message.error("分配权限失败！");
@@ -296,7 +297,7 @@ export default {
     //添加角色
     submit() {
       http({
-        url: "roles",
+        url: "roles", 
         method: "post",
         data: {
           roleName: this.ruleForm.name,
@@ -314,7 +315,6 @@ export default {
       console.log(rowID, id, item);
       (this.rowID = rowID), (this.id = id);
       this.item = item;
-      
     },
     // X删除确认
     rem() {
@@ -336,7 +336,6 @@ export default {
     },
   },
   components: {},
-
 };
 </script>
 
@@ -359,25 +358,24 @@ export default {
   width: 50%;
 }
 // 下拉权限设置
-.centerRow,.centerRow1{
+.centerRow,
+.centerRow1 {
   display: flex;
   align-items: center;
 }
-.centerRow:nth-last-child(n+1){
-   border-top: 1px solid #eeeeee;
+.centerRow:nth-last-child(n + 1) {
+  border-top: 1px solid #eeeeee;
 }
-.centerRow:last-child{
+.centerRow:last-child {
   border-bottom: 1px solid #eeeeee;
-
 }
 
-.centerRow1:nth-last-child(n+2){
-   border-bottom: 1px solid #eeeeee;
+.centerRow1:nth-last-child(n + 2) {
+  border-bottom: 1px solid #eeeeee;
 }
-.el-col>span{
+.el-col > span {
   margin-right: 14px;
   margin-top: 8px;
   margin-bottom: 8px;
-
 }
 </style>
