@@ -9,6 +9,15 @@ import 'element-ui/lib/theme-chalk/index.css';
 // axios 数据请求
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+// 富文本编辑器
+import VueQuillEditor from 'vue-quill-editor'
+
+//  require styles
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+
+Vue.use(VueQuillEditor, /* { default global options } */)
 
 
 Vue.use(VueAxios, axios)

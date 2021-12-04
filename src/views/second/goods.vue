@@ -1,7 +1,7 @@
 <template>
   <div class="goods">
-    <p class="title"><span>首页</span> > 用户管理 > 用户列表</p>
-    <div class="content">
+    <p class="title"><span>首页</span> > 商品管理 > 商品列表</p>
+    <div class="content" v-show="addshow">
       <ul>
         <li>
           <input type="text" v-model="searchs" id="" placeholder="请输入内容" />
@@ -12,8 +12,7 @@
             class="search"
             @click="search"
           ></el-button>
-          <button>添加商品</button>
-          <!--  @click="shows" -->
+          <button @click="shows">添加商品</button>
         </li>
       </ul>
       <ul>
@@ -64,25 +63,141 @@
           </el-table-column>
         </el-table>
       </ul>
+      <!-- 分页器 -->
+      <div class="block">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="1"
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="100"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="tatal"
+        >
+        </el-pagination>
+      </div>
     </div>
-    <!-- 分页器 -->
-    <div class="block">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="1"
-        :page-sizes="[10, 20, 30, 40]"
-        :page-size="100"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="tatal"
-      >
-      </el-pagination>
+    <div class="addshop" v-show="!addshow">
+      <template>
+        <el-alert
+          title="添加商品信息"
+          type="info"
+          center
+          :closable="false"
+          show-icon
+        >
+        </el-alert>
+      </template>
+      <div class="liuc">
+        <!--  -->
+        <el-steps
+          :space="200"
+          :active="num - 0"
+          finish-status="success"
+          class="cheng"
+        >
+          <el-step title="基本信息"></el-step>
+          <el-step title="商品参数"></el-step>
+          <el-step title="商品属性"></el-step>
+          <el-step title="商品图片"></el-step>
+          <el-step title="商品内容"></el-step>
+          <el-step title="完成"></el-step>
+        </el-steps>
+      </div>
+      <div class="">
+        <el-tabs
+          :tab-position="tabPosition"
+          @tab-click="show"
+          v-model="num"
+          :before-leave="beforeTabLeave"
+        >
+          <el-tab-pane label="基本信息">
+            <el-form
+              :label-position="labelPosition"
+              label-width="50px"
+              :model="formLabelAlign"
+            >
+              <el-form-item label="商品名称" :required="true" tab-click="show">
+                <el-input v-model="formLabelAlign.goods_name"></el-input>
+              </el-form-item>
+              <el-form-item label="商品价格" :required="true">
+                <el-input v-model="formLabelAlign.goods_price"></el-input>
+              </el-form-item>
+              <el-form-item label="商品重量" :required="true">
+                <el-input v-model="formLabelAlign.goods_weight"></el-input>
+              </el-form-item>
+              <el-form-item label="商品数量" :required="true">
+                <el-input v-model="formLabelAlign.goods_number"></el-input>
+              </el-form-item>
+              <el-form-item label="商品分类" :required="true">
+                <el-cascader
+                  v-model="cat_name"
+                  :options="options"
+                  @change="handleChange"
+                  :props="opads"
+                ></el-cascader>
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
+          <el-tab-pane label="商品参数">
+            <p>参数详情</p>
+            <p class="detail">
+              <el-checkbox
+                v-model="checked"
+                v-for="item in conts"
+                :key="item.iattr_id"
+              >
+                <span>
+                  {{ item.attr_name }}
+                </span>
+              </el-checkbox>
+            </p>
+          </el-tab-pane>
+          <el-tab-pane label="商品属性">
+            <!-- 商品属性 -->
+            <el-form
+              :label-position="labelPosition"
+              label-width="50px"
+              :model="formLabelAlign"
+            >
+              <el-form-item
+                v-for="item in listdata"
+                :key="item.attr_id"
+                :label="item.attr_name"
+                tab-click="show"
+              >
+                <el-input v-model="item.attr_vals"></el-input>
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
+          <el-tab-pane label="商品图片">
+            <el-upload
+              class="upload-demo"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :on-preview="handlePreview"
+              :on-remove="handleRemove"
+              :file-list="fileList"
+              list-type="picture"
+              :headers="headerObj"
+            >
+              <el-button size="small" type="primary">点击上传</el-button>
+              <div slot="tip" class="el-upload__tip"></div>
+            </el-upload>
+          </el-tab-pane>
+          <el-tab-pane label="商品内容">
+            <!-- 富文本编辑框 -->
+            <quill-editor size="large"></quill-editor>
+            <el-button type="primary" @click="submits">添加商品</el-button>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import http from "../../http/index";
+// import _ from "lodash";
 export default {
   props: {},
   data() {
@@ -90,17 +205,95 @@ export default {
       // 商品查找
       searchs: "",
       allshops: [],
+      searcharr: [],
+      //添加商品
+      addshow: true,
+      tabPosition: "left",
+      labelPosition: "top",
+      num: "0",
+      formLabelAlign: {
+        goods_name: "",
+        goods_price: 0,
+        goods_number: 0,
+        goods_weight: 0,
+        goods_cat: "",
+        goods_introduce: "",
+        pics: [],
+        attrs: "",
+      },
+
       /*商品列表数据 */
       tableData: [],
 
       // 分页器
       tatal: 0,
       pages: 1,
+      // 级联选择器
+      options: [],
+      opads: {
+        value: "cat_id",
+        label: "cat_name",
+        children: "children",
+      },
+      cat_name: "",
+      fenval: "",
+
+      // 商品属性
+      listdata: [],
+      //图片上传
+      fileList: [
+        {
+          //   name: "food.jpeg",
+          url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100",
+        },
+      ],
+      headerObj: {
+        Authorization: window.sessionStorage.getItem("token"),
+      },
+      // 参数
+      checked: true,
+      conts: [],
     };
   },
   methods: {
+    show() {
+      //   this.num++;
+      console.log(this.num);
+    },
     //商品查找
-    search() {},
+    search() {
+      let ress = this.allshops.filter((item) => {
+        return item.goods_name == this.searchs;
+      });
+      //   console.log(ress);
+      if (this.searchs && ress.length != 0) {
+        http({
+          url: `goods/${ress[0].goods_id}`,
+        })
+          .then((res) => {
+            // console.log(res);
+            this.searcharr = [];
+            this.searcharr.push(res.data);
+            this.tableData = this.searcharr;
+          })
+          .catch(() => {
+            // console.log(111);
+            this.$message({
+              message: "没有你要找的用户！",
+              type: "warning",
+            });
+          });
+      } else {
+        this.$message({
+          message: "请输入正确的用户信息！",
+          type: "warning",
+        });
+      }
+    },
+    // 添加商品
+    shows() {
+      this.addshow = !this.addshow;
+    },
     // 获取所有商品
     allpation() {
       http({
@@ -124,7 +317,7 @@ export default {
           pagesize: "10",
         },
       }).then((res) => {
-        console.log(res);
+        // console.log(res);
         this.tatal = res.data.total;
         this.tableData = res.data.goods;
         this.allpation(); // 获取所有商品
@@ -132,7 +325,9 @@ export default {
     },
 
     //编辑商品
-    handleClick() {},
+    handleClick(val) {
+      console.log(val);
+    },
     // 删除商品
     del(data) {
       //   console.log(data);
@@ -172,18 +367,109 @@ export default {
       this.pation();
       console.log(val);
     },
+    // 级联选择器
+    handleChange(val) {
+      this.formLabelAlign.goods_cat = val;
+      this.fenval = val[2];
+      console.log(val);
+    },
+    //商品分类
+    classify() {
+      http({
+        url: "categories",
+      }).then((res) => {
+        this.options = res.data;
+        // console.log(this.options);
+      });
+    },
+    // 钩子函数
+    beforeTabLeave() {
+      if (this.formLabelAlign.goods_cat.length != 3) {
+        this.$message.error("请选择商品分类！");
+        return false;
+      } else {
+        if (this.num === "0") {
+          http({
+            url: `categories/${this.fenval}/attributes`,
+            params: {
+              sel: "many",
+            },
+          }).then((res) => {
+            console.log(res);
+            this.conts = res.data;
+          });
+        }
+        if (this.num === "1") {
+          http({
+            url: `categories/${this.fenval}/attributes`,
+            params: { sel: "only" },
+          }).then((res) => {
+            console.log(res);
+            this.listdata = res.data;
+          });
+        }
+      }
+    },
+    // 图片上传
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    // 数据提交
+    submits() {
+      /*  const newForm = _.cloneDeep(this.formLabelAlign);
+      newForm.goods_cat = newForm.goods_cat.join(",");
+      http({
+        url: "goods",
+        method: "post",
+        data: newForm,
+      }).then((res) => {
+        console.log(res);
+      }); */
+
+      let fen = this.formLabelAlign.goods_cat.toString();
+      console.log(fen);
+      http({
+        url: "/goods",
+        method: "post",
+        data: {
+          goods_name: this.formLabelAlign.goods_name,
+          goods_cat: fen,
+          goods_price: this.formLabelAlign.goods_price,
+          goods_number: this.formLabelAlign.goods_number,
+          goods_weight: this.formLabelAlign.goods_weight,
+          goods_introduce: "",
+          pics: "",
+          attrs: "",
+        },
+      }).then(() => {
+        this.pation();
+        this.num = "6";
+        this.$message({
+          message: "恭喜你，添加用户成功！",
+          type: "success",
+          onClose: () => {
+            this.addshow = true;
+          },
+        });
+      });
+    },
   },
   components: {},
   created() {
     this.pation();
   },
-  mounted() {},
+  mounted() {
+    this.classify();
+  },
 };
 </script>
 
 <style scoped lang="scss">
 .goods {
-  height: 100%;
+  //   height: 100%;
   width: 100%;
   background-color: #eaedf1;
   padding: 0px 23px;
@@ -242,12 +528,34 @@ export default {
         }
       }
     }
+    /* 分页器样式 */
+    .block {
+      //   height: 50px;
+      text-align: center;
+      margin-top: 20px;
+    }
   }
-  /* 分页器样式 */
-  .block {
-    //   height: 50px;
-    text-align: center;
-    margin-top: 20px;
+  .addshop {
+    width: 100%;
+    // height: 100%;
+    background-color: white;
+    padding: 20px;
+    .liuc {
+      margin-top: 20px;
+      //   height: 100%;
+    }
+    /* .contents {
+      margin-bottom: 20px;
+    } */
+    .el-form-item {
+      margin-bottom: 0px;
+    }
+    .detail {
+      border: 1px solid #3d9cff;
+      padding: 5px;
+      margin-top: 10px;
+      border-radius: 3px;
+    }
   }
 }
 </style>
