@@ -3,7 +3,7 @@
     <el-container>
       <el-header>
         <span>电商后台管理系统</span>
-        <button>退出</button>
+        <button @click="exit()">退出</button>
       </el-header>
       <el-container>
         <el-aside   >
@@ -59,7 +59,12 @@ export default {
       console.log(res);
     });
   },
-  methods: {},
+  methods: {
+    exit(){
+      window.sessionStorage.clear();
+      this.$router.push("/login")
+    }
+  },
   components: {},
 };
 </script>
