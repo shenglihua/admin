@@ -7,7 +7,7 @@ export default function(config){
     myaxios.interceptors.request.use(function (config) {
         // 在发送请求之前做些什么
         if (config.url != '/login' &&  sessionStorage.getItem('token')) {
-          config.headers.Authorization = window.sessionStorage.getItem('token')
+            config.headers.Authorization = window.sessionStorage.getItem('token')
         }
         return config;
       }, function (error) {
