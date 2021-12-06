@@ -11,12 +11,13 @@
           <el-menu    
             :default-openeds="['0']"
             default-active='users'  
+             :unique-opened="true" 
             text-color="#fff !important"
             active-text-color="#409eff !important"
              :router='true'
              v-for="(item,index) in aside_list"
               :key="item.id"
-              :unique-opened="true" 
+             
           >
             <el-submenu
               :index="index.toString()"
@@ -24,7 +25,7 @@
               <template slot="title"
                 ><i class="el-icon-message"></i>{{ item.authName }}</template
               >
-              <el-menu-item-group v-for="ite in item.children" :key="ite.key">
+              <el-menu-item-group v-for="ite in item.children" :key="ite.key"  :router='true'>
                 <el-menu-item :index="ite.path">
                   {{ ite.authName }}</el-menu-item
                 >
