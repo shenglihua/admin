@@ -192,6 +192,45 @@
         </el-tabs>
       </div>
     </div>
+    <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+      <el-form :model="addform">
+        <el-form-item
+          label="商品名称"
+          :label-width="formLabelWidth"
+          :required="true"
+        >
+          <el-input v-model="addform.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item
+          label="商品价格"
+          :label-width="formLabelWidth"
+          :required="true"
+        >
+          <el-input v-model="addform.price" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item
+          label="商品数量"
+          :label-width="formLabelWidth"
+          :required="true"
+        >
+          <el-input v-model="addform.num" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item
+          label="商品重量"
+          :label-width="formLabelWidth"
+          :required="true"
+        >
+          <el-input v-model="addform.weight" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="商品介绍" :label-width="formLabelWidth">
+          <el-input v-model="addform.introduce" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="changeshop">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -247,12 +286,27 @@ export default {
           url: "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100",
         },
       ],
+      // 上传图片出现跨域问题
       headerObj: {
         Authorization: window.sessionStorage.getItem("token"),
       },
       // 参数
       checked: true,
       conts: [],
+      // 商品编辑
+      dialogFormVisible: false,
+      iscompile: false,
+      formLabelWidth: "120px",
+      addform: {
+        name: "",
+        price: 0,
+        num: 0,
+        weight: 0,
+        introduce: "",
+      },
+      addid: "",
+      fenid: "",
+      adds: {},
     };
   },
   methods: {
@@ -324,9 +378,55 @@ export default {
       });
     },
 
-    //编辑商品
+    //商品编辑
     handleClick(val) {
-      console.log(val);
+      this.addform.name = val.goods_name;
+      this.addform.price = val.goods_price;
+      this.addform.num = val.goods_number;
+      this.addform.weight = val.goods_weight;
+      this.addid = val.goods_id;
+      this.dialogFormVisible = true;
+      http({
+        url: `goods/${val.goods_id}`,
+      }).then((res) => {
+        this.fenid = res.data.goods_cat;
+      });
+    },
+    // 编辑商品提交
+    changeshop() {
+      if (
+        this.addform.name != "" &&
+        this.addform.price != "" &&
+        this.addform.num != "" &&
+        this.addform.weight != ""
+      ) {
+        http({
+          url: `goods/${this.addid}`,
+          method: "put",
+          data: {
+            goods_name: this.addform.name,
+            goods_price: this.addform.price,
+            goods_number: this.addform.num,
+            goods_weight: this.addform.weight,
+            goods_introduce: this.addform.introduce,
+            goods_cat: this.fenid, // 这个 id需要用根据id查询商品重获得！
+            pics: "",
+            attrs: "",
+          },
+        }).then(() => {
+          this.$message({
+            type: "success",
+            message: "商品信息更新成功!",
+          });
+          this.pation();
+          this.dialogFormVisible = false;
+        });
+      } else {
+        this.$message({
+          message: "警告哦，这是一条警告消息",
+          type: "warning",
+        });
+      }
     },
     // 删除商品
     del(data) {
@@ -419,18 +519,8 @@ export default {
     },
     // 数据提交
     submits() {
-      /*  const newForm = _.cloneDeep(this.formLabelAlign);
-      newForm.goods_cat = newForm.goods_cat.join(",");
-      http({
-        url: "goods",
-        method: "post",
-        data: newForm,
-      }).then((res) => {
-        console.log(res);
-      }); */
-
       let fen = this.formLabelAlign.goods_cat.toString();
-      console.log(fen);
+      //   console.log(fen);
       http({
         url: "/goods",
         method: "post",
@@ -555,6 +645,18 @@ export default {
       padding: 5px;
       margin-top: 10px;
       border-radius: 3px;
+    }
+  }
+  .iscompile {
+    width: 100%;
+    height: 100%;
+    color: red;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .addshow {
+      width: 40%;
     }
   }
 }
