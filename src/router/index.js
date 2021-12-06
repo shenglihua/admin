@@ -47,6 +47,10 @@ const routes = [{
                 component:()=>import('../views/second/goods.vue')
             },
             {
+                path: 'orders',
+                component: () => import('../views/second/orders.vue')
+            },
+            {
                 path: 'params',
                 component:()=>import('../views/second/classify.vue')
             },
