@@ -222,9 +222,6 @@ export default {
     // 确认添加
     submit() {
       this.dialogFormVisible = false;
-      // 在这价格对象  
-    //   this.tableData.push(this.tableData.attr_name = this.ruleForm.name);
-    //  console.log(this.tableData)
       http({
         url:`categories/${this.index}/attributes`,
         method:'post',
@@ -240,7 +237,6 @@ export default {
     },
     //
     handleChange(value) {
-      console.log(this.activeName);
       this.value = "";
       this.index = value[value.length - 1];
       this.request();

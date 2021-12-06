@@ -216,10 +216,8 @@ export default {
       },
       // 添加级联选择器
     handleChange(value) {
-   console.log(value.length);
    this.add_id=value.length
    this.add_level=value[value.length-1]
-  //  console.log( value[value.length-1]);
       },
       // 确认添加
     submit() {
